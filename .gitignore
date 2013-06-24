@@ -1,0 +1,10 @@
+*.pyc
+
+# ignore emacs and vim tmp files
+.*.*.sw*
+\#*\#
+*~
+
+# ignore environment and local settings files
+source/settings/local.py
+.tmp/

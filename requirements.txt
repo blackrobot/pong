@@ -1,0 +1,12 @@
+Django
+MySQL-python
+PIL
+Pygments
+South
+Werkzeug
+django-compressor
+django-debug-toolbar
+django-extensions
+gunicorn
+wsgiref
+pylibmc
