@@ -69,7 +69,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 TEMPLATE_DIRS = (
-    get_path(PROJECT_ROOT, 'templates'),
+    get_path(SOURCE_ROOT, 'templates'),
 )
 
 MIDDLEWARE_CLASSES = (
@@ -180,7 +180,7 @@ STATIC_ROOT = get_path(PUBLIC_ROOT, 'static')
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 STATICFILES_DIRS = (
-    get_path(PUBLIC_ROOT, 'public'),
+    get_path(PROJECT_ROOT, 'public'),
 )
 
 
@@ -190,7 +190,7 @@ STATICFILES_DIRS = (
 
 # Local apps
 PROJECT_APPS = (
-    # 'source.apps.example',
+    'source.apps.games',
 )
 
 INSTALLED_APPS = (
@@ -224,10 +224,6 @@ EMAIL_PORT = 25
 ########################
 # APPLICATION SETTINGS #
 ########################
-
-HTML_DESIGN_ROOT = get_path(SOURCE_ROOT, 'templates', 'html')
-HTML_DESIGN_RELATIVE_PATH = 'html'
-HTML_DESIGN_NAMESPACE = 'html'
 
 COMPRESS_ENABLED = True
 COMPRESS_URL = STATIC_URL

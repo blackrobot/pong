@@ -44,7 +44,7 @@ class CommonModel(models.Model):
 
     def update_date_modified(self):
         """ Override this to change how date_modified works. """
-        return datetime.datettime.now()
+        return datetime.datetime.now()
 
 
 class StatusManager(models.Manager):
