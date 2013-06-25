@@ -1,0 +1,21 @@
+<form action="{% url 'games:login' %}" method="post">
+  <legend>Login</legend>
+
+  <div class="control-group">
+    <div class="controls">
+      <input name="username" id="username" placeholder="Username" type="text">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <input name="password" id="password" placeholder="Password" type="password">
+    </div>
+  </div>
+
+  {% csrf_token %}
+
+  <button type="submit" class="btn btn-success">
+    <i class="icon-user icon-white"></i> Login
+  </button>
+</form>

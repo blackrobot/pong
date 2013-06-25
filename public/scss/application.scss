@@ -1,0 +1,60 @@
+$bbox-orange: rgb(255, 103, 47);
+
+/* Image replace method from HTML5 Boilerplate: goo.gl/kk0EN */
+%image-replace {
+  background-color: transparent;
+  border: 0;
+  overflow: hidden;
+
+  &:before {
+    content: "";
+    display: block;
+    height: 150%;
+    width: 0;
+  }
+}
+
+/* Transition all over a quarter second */
+%simple-transition {
+  -webkit-transition: all 0.25s ease-in-out;
+     -moz-transition: all 0.25s ease-in-out;
+          transition: all 0.25s ease-in-out;
+}
+
+header {
+  background: $bbox-orange;
+  color: #FFF;
+  margin-bottom: 15px;
+
+  h1 { position: relative; }
+}
+
+#logo {
+  @extend %image-replace;
+  $height: 24px;
+
+  background: url(../img/logo.png) no-repeat;
+  display: block;
+  position: absolute;
+  right: 0;
+
+  margin-top: $height / -2;
+  top: 50%;
+
+  height: $height;
+  width: 144px;
+}
+
+#rankings {
+  tbody {
+    td:nth-child(3) a {
+      @extend %simple-transition;
+      opacity: 0;
+    }
+    tr:hover td:nth-child(3) a {
+      opacity: 1;
+    }
+  }
+}
+
+form legend { margin-bottom: 0; }

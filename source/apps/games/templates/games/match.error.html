@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="span4 offset4">
+    <a href="{% url 'games:index' %}"><i class="icon-home"></i> Home</a>
+    {% include "games/match.form.html" %}
+  </div>
+</div>
+{% endblock %}

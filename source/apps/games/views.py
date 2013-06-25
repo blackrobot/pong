@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import GameForm
+from .forms import MatchForm, SingleGameForm
 
 
 @require_POST
@@ -16,27 +18,52 @@ def user_login(request):
     if user is not None and user.is_active:
         login(request, user)
         return redirect('/')
+
+    messages.error(request,
+                   "<strong>Nope!</strong> We were unable to log you in.")
+
     return redirect('/?fail')
 
 
+@login_required
 @require_POST
-def submit(request):
-    form = GameForm(request.POST, submitter=request.user)
+def match_submit(request):
+    form = MatchForm(request.POST, submitter=request.user)
+
+    if form.is_valid():
+        won, lost = form.save()
+        messages.success(
+            request,
+            ("<strong>Updated!</strong> {} wins and {} losses have "
+             "been recorded.").format(won, lost)
+        )
+        return redirect('/')
+    return render(request, 'games/match.error.html', {'match_form': form})
+
+
+@login_required
+@require_POST
+def single_game_submit(request):
+    form = SingleGameForm(request.POST, submitter=request.user)
 
     if form.is_valid():
         form.save()
+        messages.success(
+            request, "<strong>Updated!</strong> Your game has been recorded!")
         return redirect('/')
-    return redirect('/?fail')
+    return render(request, 'games/single-game.error.html', {'game_form': form})
 
 
 def index(request):
     if request.user.is_authenticated:
-        game_form = GameForm(submitter=request.user)
-    else:
-        game_form = None
+        single_game_form = SingleGameForm(submitter=request.user)
+        match_form = MatchForm(submitter=request.user)
 
-    return render(request, 'index.html', {
+    else:
+        single_game_form = match_form = None
+
+    return render(request, 'games/index.html', {
         'rankings': User.objects.order_by('-rating__mu'),
-        'game_form': game_form,
-        'login_fail': request.GET.get('fail'),
+        'single_game_form': single_game_form,
+        'match_form': match_form,
     })

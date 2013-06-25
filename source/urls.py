@@ -11,16 +11,11 @@ urlpatterns = patterns(
     '',
 
     # Django Admin
-    url(r"^%s/" % settings.ADMIN_NAMESPACE, include(admin.site.urls)),
+    url(r"^{}/".format(settings.ADMIN_NAMESPACE), include(admin.site.urls)),
 
-    # Game Submit
-    url(r"^submit-game/$", 'source.apps.games.views.submit', name="submit"),
-
-    # User Login
-    url(r"^login/$", 'source.apps.games.views.user_login', name="login"),
-
-    # Index
-    url(r"^$", 'source.apps.games.views.index', name="index"),
+    # Games gets the root
+    url(r"^", include('source.apps.games.urls',
+                      namespace="games", app_name="games")),
 )
 
 if getattr(settings, "LOCAL_SERVE", False):

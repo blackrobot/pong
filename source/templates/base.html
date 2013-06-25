@@ -1,0 +1,25 @@
+{% load compress %}<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Blenderbox Ping Pong Leaderboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% compress css %}
+      <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.css">
+      <link type="text/x-scss" rel="stylesheet" href="{{ STATIC_URL }}scss/application.scss">
+    {% endcompress %}
+  </head>
+<body>
+  <header class="jumbotron">
+    <div class="container-fluid">
+      <h1><i id="logo">Blenderbox</i>Ping Pong Leadboard</h1>
+    </div>
+  </header>
+
+  <div class="container-fluid">
+    {% block content %}{% endblock %}
+  </div>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+</body>
+</html>

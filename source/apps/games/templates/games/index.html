@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if messages %}
+<div class="row-fluid">
+  <div class="span12">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message|safe }}</div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="row-fluid">
+  <div class="span3">
+    {% if request.user.is_authenticated %}
+      <div class="well">
+        {% include "games/match.form.html" %}
+      </div>
+
+      <div class="well">
+        {% include "games/single-game.form.html" %}
+      </div>
+    {% else %}
+      {% include "games/login.form.html" %}
+    {% endif %}
+  </div>
+
+  <div class="span9">
+    <table class="table table-striped" id="rankings">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Wins</th>
+          <th>Losses</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in rankings %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ user.get_full_name }}</td>
+            <td>{{ user.wins.count }}</td>
+            <td>{{ user.losses.count }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock content %}
