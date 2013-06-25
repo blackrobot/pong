@@ -7,10 +7,10 @@ LOCAL_SERVE = False
 # Databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': "bbox_rank",
-        'USER': "",
-        'PASSWORD': "",
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': "bbox_pong",
+        'USER': "postgres",
+        'PASSWORD': "postgres",
     },
 }
 
