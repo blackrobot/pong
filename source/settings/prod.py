@@ -8,9 +8,11 @@ LOCAL_SERVE = False
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': 'localhost',
+        'PORT': 5433,
         'NAME': "bbox_pong",
         'USER': "postgres",
-        'PASSWORD': "postgres",
+        'PASSWORD': "lqsergtsop",
     },
 }
 
