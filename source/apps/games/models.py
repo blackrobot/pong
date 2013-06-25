@@ -8,14 +8,25 @@ import trueskill
 from source.apps.abstract.models import CommonModel
 
 
+ts_env = trueskill.global_env()
+
+
 class Rating(CommonModel):
     user = models.OneToOneField(User)
     mu = models.FloatField(default=trueskill.MU, editable=False)
     sigma = models.FloatField(default=trueskill.SIGMA, editable=False)
+    exposure = models.FloatField(default=0, editable=False)
+
+    class Meta:
+        ordering = ('-exposure',)
+
+    def save(self, *args, **kwargs):
+        self.exposure = ts_env.expose(self.trueskill)
+        super(Rating, self).save(*args, **kwargs)
 
     @property
     def trueskill(self):
-        return trueskill.Rating(mu=self.mu, sigma=self.sigma)
+        return ts_env.create_rating(mu=self.mu, sigma=self.sigma)
 
     def update_rating(self, outcome):
         self.mu = outcome.mu
@@ -43,7 +54,10 @@ class Game(CommonModel):
         self.calculate_ratings()
 
     def calculate_ratings(self):
-        outcomes = trueskill.rate_1vs1(self.winner.rating.trueskill,
-                                       self.loser.rating.trueskill)
+        outcomes = trueskill.rate_1vs1(
+            self.winner.rating.trueskill,
+            self.loser.rating.trueskill,
+            env=ts_env,
+        )
         self.winner.rating.update_rating(outcomes[0])
         self.loser.rating.update_rating(outcomes[1])
