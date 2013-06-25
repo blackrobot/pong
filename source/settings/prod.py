@@ -20,11 +20,7 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
         'TIMEOUT': 300,
-        'BINARY': True,
-        'OPTIONS': {
-            'tcp_nodelay': True,
-            'ketama': True,
-        },
+        'KEY_PREFIX': 'pong',
     },
 }
 
