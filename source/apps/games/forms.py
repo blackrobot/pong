@@ -1,7 +1,62 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail
+from django.db.models import Q
+from django.template.loader import render_to_string
 
 from .models import Game
+
+
+DOMAIN = Site.objects.get_current().domain
+
+
+def request_confirmation(user, submitter):
+    """ This will email a link to the given user asking them to confirm game
+    outcomes.
+    """
+    subject = "[Ping Pong Leaderboard] Games awaiting confirmation!"
+    body = render_to_string('games/email.confirmation.txt', {
+        'user': user,
+        'submitter': submitter,
+        'domain': DOMAIN,
+    })
+    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [user.email],
+              fail_silently=not settings.DEBUG)
+
+
+class ConfirmationForm(forms.Form):
+    game_id = forms.IntegerField(widget=forms.HiddenInput())
+    confirmed = forms.BooleanField()
+
+    def __init__(self, *args, **kwargs):
+        game_id = kwargs.pop('game_id', None)
+        super(ConfirmationForm, self).__init__(*args, **kwargs)
+        if game_id:
+            self.fields['game_id'].initial = game_id
+
+    def save(self, user):
+        try:
+            game = Game.objects.filter(
+                Q(winner=user) | Q(loser=user)
+            ).filter(
+                confirmed=False,
+            ).exclude(
+                claimant=user,
+            ).get(id=self.cleaned_data.get('game_id'))
+
+        except Game.DoesNotExist:
+            return False
+
+        if self.cleaned_data.get('confirmed', False):
+            game.confirmed = True
+            game.save()
+
+        else:
+            game.delete()
+
+        return True
 
 
 class MatchForm(forms.Form):
@@ -41,10 +96,20 @@ class MatchForm(forms.Form):
         won, lost = int(data.get('games_won')), int(data.get('games_lost'))
 
         for i in range(won):
-            Game.objects.create(winner=self.submitter, loser=opponent)
+            Game.objects.create(
+                winner=self.submitter,
+                loser=opponent,
+                claimant=self.submitter,
+            )
 
         for i in range(lost):
-            Game.objects.create(winner=opponent, loser=self.submitter)
+            Game.objects.create(
+                winner=opponent,
+                loser=self.submitter,
+                claimant=self.submitter,
+            )
+
+        request_confirmation(opponent, self.submitter)
 
         return won, lost
 
@@ -71,4 +136,10 @@ class SingleGameForm(forms.Form):
         else:
             winner, loser = self.submitter, opponent
 
-        Game.objects.create(winner=winner, loser=loser)
+        Game.objects.create(
+            winner=winner,
+            loser=loser,
+            claimant=self.submitter,
+        )
+
+        request_confirmation(opponent, self.submitter)

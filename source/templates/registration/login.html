@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block login_active %} class="active"{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="span12">
+    {% include 'games/login.form.html' %}
+  </div>
+</div>
+{% endblock %}

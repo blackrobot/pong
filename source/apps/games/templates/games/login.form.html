@@ -1,19 +1,20 @@
-<form action="{% url 'games:login' %}" method="post">
+<form action="{% url 'login' %}" method="post">
   <legend>Login</legend>
 
   <div class="control-group">
     <div class="controls">
-      <input name="username" id="username" placeholder="Username" type="text">
+      <input name="username" id="id_username" max_length="254" placeholder="Username" type="text">
     </div>
   </div>
 
   <div class="control-group">
     <div class="controls">
-      <input name="password" id="password" placeholder="Password" type="password">
+      <input name="password" id="id_password" placeholder="Password" type="password">
     </div>
   </div>
 
   {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next|default:'/' }}">
 
   <button type="submit" class="btn btn-success">
     <i class="icon-user icon-white"></i> Login

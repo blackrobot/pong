@@ -10,9 +10,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'HOST': 'localhost',
         'PORT': 5433,
-        'NAME': "bbox_pong",
-        'USER': "postgres",
-        'PASSWORD': "lqsergtsop",
+        'NAME': 'bbox_pong',
+        'USER': 'postgres',
+        'PASSWORD': 'lqsergtsop',
     },
 }
 
@@ -29,11 +29,6 @@ CACHES = {
 # Only cache for users who aren't logged in
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
-
-# Paths
-PUBLIC_ROOT = get_path(PROJECT_ROOT, '../public/')
-MEDIA_ROOT = get_path(PUBLIC_ROOT, 'media/')
-STATIC_ROOT = get_path(PUBLIC_ROOT, 'static/')
 
 # Email
 EMAIL_HOST = None

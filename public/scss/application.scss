@@ -58,3 +58,23 @@ header {
 }
 
 form legend { margin-bottom: 0; }
+
+td.thin-cell { max-width: 20%; }
+td.bold { font-weight: bold; }
+td.win, td.loss {
+  $border: 3px solid #FFF;
+  border-left: $border;
+  border-right: $border;
+  color: #FFF;
+  font-weight: bold;
+  text-align: center;
+}
+td.win {
+  background-color: rgba(0, 128, 0, 0.65);
+  tr:hover > & { background-color: rgba(0, 128, 0, 0.7) !important; }
+}
+td.loss {
+  background-color: rgba(255, 0, 0, 0.65);
+  tr:hover > & { background-color: rgba(255, 0, 0, 0.7) !important; }
+}
+td form { margin: 0 auto; }

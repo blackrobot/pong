@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block confirm_active %} class="active"{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="span12">
+    {% if games %}
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Date Submitted</th>
+            <th>Opponent</th>
+            <th>Outcome</th>
+            <th>Confirm or Reject</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for game in games %}
+            <tr>
+              <td class="thin-cell">{{ game.date_created }}</td>
+              <td class="bold">{{ game.claimant.get_full_name }}</td>
+              {% if game.claimant == game.loser %}
+                <td class="win">You Won</td>
+              {% else %}
+                <td class="loss">You Lost</td>
+              {% endif %}
+              <td>
+                <form action="{% url 'games:submit_confirmation' %}" class="form-inline" method="post">
+                  {{ game.form.game_id }}
+                  {% csrf_token %}
+                  <button class="btn btn-success" name="confirmed" value="on" type="submit">Confirm</button>
+                  <button class="btn btn-danger" name="confirmed" type="submit">Reject</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <h2>There are no games pending confirmation.</h2>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

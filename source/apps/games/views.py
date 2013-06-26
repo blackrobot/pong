@@ -1,28 +1,12 @@
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import MatchForm, SingleGameForm
-
-
-@require_POST
-def user_login(request):
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-
-    user = authenticate(username=username, password=password)
-
-    if user is not None and user.is_active:
-        login(request, user)
-        return redirect('/')
-
-    messages.error(request,
-                   "<strong>Nope!</strong> We were unable to log you in.")
-
-    return redirect('/?fail')
+from .forms import ConfirmationForm, MatchForm, SingleGameForm
+from .models import Game
 
 
 @login_required
@@ -35,7 +19,7 @@ def match_submit(request):
         messages.success(
             request,
             ("<strong>Updated!</strong> {} wins and {} losses have "
-             "been recorded.").format(won, lost)
+             "been submitted for approval!").format(won, lost)
         )
         return redirect('/')
     return render(request, 'games/match.error.html', {'match_form': form})
@@ -49,9 +33,56 @@ def single_game_submit(request):
     if form.is_valid():
         form.save()
         messages.success(
-            request, "<strong>Updated!</strong> Your game has been recorded!")
+            request,
+            "<strong>Updated!</strong> Your game has been submitted "
+            "for approval!"
+        )
         return redirect('/')
     return render(request, 'games/single-game.error.html', {'game_form': form})
+
+
+@login_required
+@require_POST
+def submit_confirmation(request):
+    """ Processes a game confirmation request. """
+    form = ConfirmationForm(request.POST)
+
+    if form.is_valid():
+        accepted = form.save(request.user)
+    else:
+        accepted = False
+
+    if accepted:
+        messages.success(
+            request,
+            "<strong>Tyte!</strong> We've updated the rankings based "
+            "on your input."
+        )
+    else:
+        messages.error(
+            request,
+            "<strong>Oh no!</strong> We couldn't record your update. "
+            "Try again?"
+        )
+
+    return redirect('games:game_confirm')
+
+
+@login_required
+def game_confirm(request):
+    """ Show the user a table of unconfirmed games, and allow them to confirm
+    or reject them.
+    """
+    user = request.user
+    games = Game.objects.filter(
+        confirmed=False,
+    ).filter(
+        Q(winner=user) | Q(loser=user)
+    ).exclude(claimant=user).order_by('date_created')
+
+    return render(request, 'games/confirm.html', {
+        'games': games,
+    })
 
 
 def index(request):

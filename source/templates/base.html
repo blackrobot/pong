@@ -17,6 +17,27 @@
   </header>
 
   <div class="container-fluid">
+    <ul class="nav nav-pills">
+      <li{% if request.path == '/' %} class="active"{% endif %}><a href="/">Home</a></li>
+      {% if request.user.is_authenticated %}
+        <li{% block confirm_active %}{% endblock %}><a href="{% url 'games:game_confirm' %}">Confirm Games</a></li>
+        <li{% block change_password_active %}{% endblock %}><a href="{% url 'password_change' %}">Change Password</a></li>
+        <li><a href="{% url 'logout' %}">Log Out</a></li>
+      {% else %}
+        <li{% block login_active %}{% endblock %}><a href="{% url 'login' %}?next={{ request.path }}">Log In</a></li>
+      {% endif %}
+    </ul>
+
+    {% if messages %}
+      <div class="row-fluid">
+        <div class="span12">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message|safe }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
     {% block content %}{% endblock %}
   </div>
 

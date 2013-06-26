@@ -49,9 +49,14 @@ class Game(CommonModel):
     winner = models.ForeignKey(User, related_name='wins')
     loser = models.ForeignKey(User, related_name='losses')
 
+    claimant = models.ForeignKey(User, related_name='claims')
+    confirmed = models.BooleanField(default=False)
+
     def save(self, *args, **kwargs):
         super(Game, self).save(*args, **kwargs)
-        self.calculate_ratings()
+
+        if self.confirmed:
+            self.calculate_ratings()
 
     def calculate_ratings(self):
         outcomes = trueskill.rate_1vs1(
@@ -61,3 +66,8 @@ class Game(CommonModel):
         )
         self.winner.rating.update_rating(outcomes[0])
         self.loser.rating.update_rating(outcomes[1])
+
+    @property
+    def form(self):
+        from .forms import ConfirmationForm
+        return ConfirmationForm(game_id=self.id)
