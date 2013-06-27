@@ -29,7 +29,7 @@ INTERNAL_IPS = (
 # This will be used in the Django Admin
 SITE_TITLE = "Blenderbox Ping Pong Leaderboard"
 SITE_ID = 1
-SITE_URL = "leaderboard.bbox.ly"
+SITE_URL = "pong.bbox.ly"
 USE_X_FORWARDED_HOSTS = True
 ALLOWED_HOSTS = (
     ".{}".format(SITE_URL),
@@ -217,7 +217,7 @@ INSTALLED_APPS = (
 #########
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = "no-reply@{}".format(SITE_URL)
-EMAIL_SUBJECT_PREFIX = "[Ping Pong Leaderboard] "
+EMAIL_SUBJECT_PREFIX = "[Pong Leaderboard] "
 
 
 ###############

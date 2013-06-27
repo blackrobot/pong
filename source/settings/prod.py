@@ -1,4 +1,5 @@
-from source.settings.defaults import *
+from .defaults import *
+from .secrets import *
 
 
 DEBUG = False
@@ -12,7 +13,7 @@ DATABASES = {
         'PORT': 5433,
         'NAME': 'bbox_pong',
         'USER': 'postgres',
-        'PASSWORD': 'lqsergtsop',
+        'PASSWORD': DATABASE_PASSWORD,
     },
 }
 
@@ -29,10 +30,3 @@ CACHES = {
 # Only cache for users who aren't logged in
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
-
-# Email
-EMAIL_HOST = None
-EMAIL_HOST_USER = None
-EMAIL_HOST_PASSWORD = None
-EMAIL_PORT = 25
-EMAIL_USE_TLS = False
