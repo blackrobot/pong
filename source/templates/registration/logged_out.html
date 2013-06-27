@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block change_password_active %} class="active"{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="span12">
+    <h2>Now you're logged out. Do you want to
+    <a href="{% url 'accounts:login' %}">log in</a> again?</h2>
+  </div>
+</div>
+{% endblock %}

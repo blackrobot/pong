@@ -10,18 +10,12 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
 
+    # Auth
+    url(r"^accounts/", include('source.utils.registration_urls',
+                               namespace="accounts", app_name="accounts")),
+
     # Django Admin
     url(r"^{}/".format(settings.ADMIN_NAMESPACE), include(admin.site.urls)),
-
-    # Auth
-    url(r"^user/login/$", 'django.contrib.auth.views.login', name="login"),
-    url(r"^user/logout/$", 'django.contrib.auth.views.logout',
-        {'next_page': '/'}, name="logout"),
-    url(r"^user/change-password/$",
-        'django.contrib.auth.views.password_change', name="password_change"),
-    url(r"^user/change-password/done/$",
-        'django.contrib.auth.views.password_change_done',
-        name="password_change_done"),
 
     # Games gets the root
     url(r"^", include('source.apps.games.urls',

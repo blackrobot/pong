@@ -19,7 +19,6 @@ DEBUG = False
 TEMPLATE_DEBUG = True
 
 MANAGERS = ADMINS = (
-    ("Jane Doe", "jane.doe@example.com"),
     ("John Doe", "john.doe@example.com"),
 )
 
@@ -28,9 +27,9 @@ INTERNAL_IPS = (
 )
 
 # This will be used in the Django Admin
-SITE_TITLE = "Bbox_Rank"
+SITE_TITLE = "Blenderbox Ping Pong Leaderboard"
 SITE_ID = 1
-SITE_URL = "example.com"
+SITE_URL = "leaderboard.bbox.ly"
 USE_X_FORWARDED_HOSTS = True
 ALLOWED_HOSTS = (
     ".{}".format(SITE_URL),
@@ -44,7 +43,7 @@ LANGUAGE_CODE = 'en'
 LANGUAGES = [('en', 'English')]
 DEFAULT_LANGUAGE = 0
 
-SECRET_KEY = "7ftf$zrtl$qxk&6kgj9fbsg!p&==w^*cn!rzz=@ygec$u%wc+i"
+SECRET_KEY = ":)"
 
 # Internationalization and Date Format
 USE_I18N = USE_L10N = False
@@ -92,7 +91,7 @@ MIDDLEWARE_CLASSES = (
 
 # URL Stuff
 ROOT_URLCONF = 'source.urls'
-ADMIN_NAMESPACE = 'admin'
+ADMIN_NAMESPACE = 'paddle'
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -194,6 +193,8 @@ PROJECT_APPS = (
 )
 
 INSTALLED_APPS = (
+    'suit',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -216,14 +217,25 @@ INSTALLED_APPS = (
 #########
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = "no-reply@{}".format(SITE_URL)
-EMAIL_SUBJECT_PREFIX = "[{}] ".format(SITE_URL)
-EMAIL_HOST = "localhost"
-EMAIL_PORT = 25
+EMAIL_SUBJECT_PREFIX = "[Ping Pong Leaderboard] "
+
+
+###############
+# Django Auth #
+###############
+
+LOGIN_URL = 'accounts:login'
+LOGOUT_URL = 'accounts:logout'
+LOGIN_REDIRECT_URL = '/'
 
 
 ########################
 # APPLICATION SETTINGS #
 ########################
+
+SUIT_CONFIG = {
+    'ADMIN_NAME': SITE_TITLE,
+}
 
 COMPRESS_ENABLED = True
 COMPRESS_URL = STATIC_URL
@@ -261,28 +273,7 @@ FABRIC_PATH_TEMPLATES = {
     'log': os.path.join(FABRIC_BASE_PATH, 'log'),
     'venv': os.path.join(FABRIC_BASE_PATH, 'env'),
 }
-FABRIC_ENVIRONMENTS = {
-    # 'dev': {
-    #     'django_settings': 'source.settings.dev',
-    #     'process': 'example.dev',
-    #     'site_url': 'example.dev',
-    #     'vagrant': True,
-    # },
-
-    # 'stage': {
-    #     'branch': 'master',
-    #     'django_settings': 'source.settings.stage',
-    #     'process': 'stage.example.com',
-    #     'site_url': 'stage.example.com',
-    # },
-
-    # 'prod': {
-    #     'branch': 'prod',
-    #     'django_settings': 'source.settings.prod',
-    #     'process': 'example.com',
-    #     'site_url': 'example.com',
-    # },
-}
+FABRIC_ENVIRONMENTS = {}
 
 
 # Debug Toolbar

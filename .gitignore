@@ -8,4 +8,5 @@
 
 # ignore environment and local settings files
 source/settings/local.py
+source/settings/secrets.py
 .tmp/

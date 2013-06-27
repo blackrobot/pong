@@ -94,7 +94,7 @@ def index(request):
         single_game_form = match_form = None
 
     return render(request, 'games/index.html', {
-        'rankings': User.objects.order_by('-rating__exposure'),
+        'rankings': User.objects.order_by('-rating__exposure', 'first_name'),
         'single_game_form': single_game_form,
         'match_form': match_form,
     })
