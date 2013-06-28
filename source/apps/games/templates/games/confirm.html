@@ -30,7 +30,7 @@
                   {{ game.form.game_id }}
                   {% csrf_token %}
                   <button class="btn btn-success" name="confirmed" value="on" type="submit">Confirm</button>
-                  <button class="btn btn-danger" name="confirmed" type="submit">Reject</button>
+                  <button class="btn btn-danger" name="confirmed" value="off" type="submit">Reject</button>
                 </form>
               </td>
             </tr>

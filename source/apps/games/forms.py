@@ -39,11 +39,9 @@ class ConfirmationForm(forms.Form):
     def save(self, user):
         try:
             game = Game.objects.filter(
-                Q(winner=user) | Q(loser=user)
-            ).filter(
+                Q(winner=user) | Q(loser=user),
                 confirmed=False,
-            ).get(id=self.cleaned_data.get('game_id'))
-
+            ).exclude(claimant=user).get(id=self.cleaned_data.get('game_id'))
         except Game.DoesNotExist:
             return False
 

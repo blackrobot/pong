@@ -59,6 +59,11 @@ header {
 
 form legend { margin-bottom: 0; }
 
+td, th {
+  &.extra-thin-cell {
+    width: 4%;
+  }
+}
 td.thin-cell { max-width: 20%; }
 td.bold { font-weight: bold; }
 td.win, td.loss {
