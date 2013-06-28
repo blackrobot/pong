@@ -42,8 +42,6 @@ class ConfirmationForm(forms.Form):
                 Q(winner=user) | Q(loser=user)
             ).filter(
                 confirmed=False,
-            ).exclude(
-                claimant=user,
             ).get(id=self.cleaned_data.get('game_id'))
 
         except Game.DoesNotExist:
