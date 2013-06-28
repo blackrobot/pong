@@ -55,6 +55,9 @@ header {
       opacity: 1;
     }
   }
+  tr.info .icon-star-empty {
+    opacity: 0.2;
+  }
 }
 
 form legend { margin-bottom: 0; }
@@ -83,3 +86,9 @@ td.loss {
   tr:hover > & { background-color: rgba(255, 0, 0, 0.7) !important; }
 }
 td form { margin: 0 auto; }
+
+path {
+  stroke: steelblue;
+  stroke-width: 1;
+  fill: none;
+}

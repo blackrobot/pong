@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load gametags %}
+{% load gametags compress %}
 
 {% block content %}
 <div class="row-fluid">
@@ -31,9 +31,15 @@
         {% for user in rankings %}
           <tr{% if user == request.user %} class="info"{% endif %}>
             <td class="muted">{{ forloop.counter }}</td>
-            <td><strong>{{ user.get_full_name }}</strong></td>
-            <td>{{ user.wins|confirmed_count }}</td>
-            <td>{{ user.losses|confirmed_count }}</td>
+            <td>
+              <strong>{{ user.get_full_name }}
+                {% if user == request.user %}<i class="icon-star-empty"></i>{% endif %}
+              </strong>
+            </td>
+            {% with wins=user.wins|confirmed_count losses=user.losses|confirmed_count %}
+              <td>{{ wins }}</td>
+              <td>{{ losses }}</td>
+            {% endwith %}
           </tr>
         {% endfor %}
       </tbody>
