@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load gametags %}
 
 {% block content %}
 <div class="row-fluid">
@@ -31,8 +32,8 @@
           <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ user.get_full_name }}</td>
-            <td>{{ user.wins.count }}</td>
-            <td>{{ user.losses.count }}</td>
+            <td>{{ user.wins|confirmed_count }}</td>
+            <td>{{ user.losses|confirmed_count }}</td>
           </tr>
         {% endfor %}
       </tbody>
