@@ -25,6 +25,9 @@
           <th>Name</th>
           <th>Wins</th>
           <th>Losses</th>
+          {% if request.user.is_authenticated %}
+            <th>You vs Them</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -40,6 +43,11 @@
               <td>{{ wins }}</td>
               <td>{{ losses }}</td>
             {% endwith %}
+            {% if request.user.is_authenticated %}
+              <td>
+                <div class="sparkline" data-record="{{ request.user|record:user }}"></div>
+              </td>
+            {% endif %}
           </tr>
         {% endfor %}
       </tbody>
@@ -47,3 +55,12 @@
   </div>
 </div>
 {% endblock content %}
+
+{% block js %}
+  {% if request.user.is_authenticated %}
+    {% compress js %}
+      <script src="{{ STATIC_URL }}js/lib/jquery.sparkline.js"></script>
+      <script src="{{ STATIC_URL }}js/index.js"></script>
+    {% endcompress %}
+  {% endif %}
+{% endblock %}
