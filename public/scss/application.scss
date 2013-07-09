@@ -1,5 +1,12 @@
 $bbox-orange: rgb(255, 103, 47);
 
+/* Border Box */
+%border-box {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 /* Image replace method from HTML5 Boilerplate: goo.gl/kk0EN */
 %image-replace {
   background-color: transparent;
@@ -86,9 +93,3 @@ td.loss {
   tr:hover > & { background-color: rgba(255, 0, 0, 0.7) !important; }
 }
 td form { margin: 0 auto; }
-
-path {
-  stroke: steelblue;
-  stroke-width: 1;
-  fill: none;
-}

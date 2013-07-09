@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 import trueskill
 
-from source.apps.abstract.models import CommonModel
+from source.apps.abstract.models import CommonModel, QuerySet
 
 
 ts_env = trueskill.global_env()
@@ -45,12 +46,27 @@ def user_pre_delete(sender, instance, **kwargs):
     instance.rating.delete()
 
 
+class GameQuerySet(QuerySet):
+    def confirmed(self):
+        return self.filter(confirmed=True)
+
+    def played_by(self, *players):
+        return self.filter(
+            *[Q(winner=player) | Q(loser=player) for player in players]
+        )
+
+
 class Game(CommonModel):
     winner = models.ForeignKey(User, related_name='wins')
     loser = models.ForeignKey(User, related_name='losses')
 
     claimant = models.ForeignKey(User, related_name='claims')
     confirmed = models.BooleanField(default=False)
+
+    objects = GameQuerySet.as_manager()
+
+    class Meta:
+        ordering = ['date_created']
 
     def save(self, *args, **kwargs):
         super(Game, self).save(*args, **kwargs)

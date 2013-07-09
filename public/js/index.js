@@ -1,4 +1,6 @@
 ;(function($) {
+  var selector = '.sparkline';
+  var data_key = 'record';
   var config = {
     'type': 'tristate',
     'disableInteraction': true,
@@ -6,14 +8,17 @@
     'disableHighlight': true,
     'barWidth': 6,
     'barSpacing': 2,
-    'posBarColor': 'rgba(70, 136, 71, 0.8)',
-    'negBarColor': 'rgba(185, 74, 72, 0.8)'
+    'posBarColor': 'rgba(70, 136, 71, 0.75)',
+    'negBarColor': 'rgba(185, 74, 72, 0.75)'
   };
 
   function init() {
-    $('.sparkline').each(function(i, e) {
-      var $el = $(this);
-      $el.sparkline($el.data('record'), config);
+    var $el;
+    var $sparklines = $(selector);
+
+    $sparklines.each(function(i, e) {
+      $el = $(this);
+      $el.sparkline($el.data(data_key), config);
     });
   }
 

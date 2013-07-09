@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% load gametags compress %}
+{% load compress %}
 
 {% block content %}
 <div class="row-fluid">
   <div class="span3">
-    {% if request.user.is_authenticated %}
+    {% if is_authenticated %}
       <div class="well">
         {% include "games/match.form.html" %}
       </div>
@@ -25,28 +25,24 @@
           <th>Name</th>
           <th>Wins</th>
           <th>Losses</th>
-          {% if request.user.is_authenticated %}
+          {% if is_authenticated %}
             <th>You vs Them</th>
           {% endif %}
         </tr>
       </thead>
       <tbody>
-        {% for user in rankings %}
-          <tr{% if user == request.user %} class="info"{% endif %}>
+        {% for ranked_user in rankings %}
+          <tr{% if ranked_user == request.user %} class="info"{% endif %}>
             <td class="muted">{{ forloop.counter }}</td>
             <td>
-              <strong>{{ user.get_full_name }}
-                {% if user == request.user %}<i class="icon-star-empty"></i>{% endif %}
+              <strong>{{ ranked_user.get_full_name }}
+                {% if ranked_user == request.user %}<i class="icon-star-empty"></i>{% endif %}
               </strong>
             </td>
-            {% with wins=user.wins|confirmed_count losses=user.losses|confirmed_count %}
-              <td>{{ wins }}</td>
-              <td>{{ losses }}</td>
-            {% endwith %}
-            {% if request.user.is_authenticated %}
-              <td>
-                <div class="sparkline" data-record="{{ request.user|record:user }}"></div>
-              </td>
+            <td>{{ ranked_user.total_wins }}</td>
+            <td>{{ ranked_user.total_losses }}</td>
+            {% if is_authenticated %}
+              <td class="sparkline" data-record="{{ ranked_user.record }}"></td>
             {% endif %}
           </tr>
         {% endfor %}
@@ -57,7 +53,7 @@
 {% endblock content %}
 
 {% block js %}
-  {% if request.user.is_authenticated %}
+  {% if is_authenticated %}
     {% compress js %}
       <script src="{{ STATIC_URL }}js/lib/jquery.sparkline.js"></script>
       <script src="{{ STATIC_URL }}js/index.js"></script>
