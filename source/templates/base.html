@@ -1,4 +1,4 @@
-{% load compress %}<!DOCTYPE html>
+{% load compress gametags %}<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -20,7 +20,7 @@
     <ul class="nav nav-pills">
       <li{% if request.path == '/' %} class="active"{% endif %}><a href="/">Home</a></li>
       {% if request.user.is_authenticated %}
-        <li{% block confirm_active %}{% endblock %}><a href="{% url 'games:game_confirm' %}">Confirm Games</a></li>
+        <li{% block confirm_active %}{% endblock %}><a href="{% url 'games:game_confirm' %}">Confirm Games{% unconfirmed_games request.user %}</a></li>
         <li{% block change_password_active %}{% endblock %}><a href="{% url 'accounts:password_change' %}">Change Password</a></li>
         <li><a href="{% url 'accounts:logout' %}">Log Out</a></li>
       {% else %}
@@ -33,7 +33,7 @@
       <div class="row-fluid">
         <div class="span12">
           {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">{{ message|safe }}</div>
+            <div class="alert alert-{{ message.tags }}">{{ message|safe }}</div>
           {% endfor %}
         </div>
       </div>

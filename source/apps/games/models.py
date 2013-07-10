@@ -55,6 +55,11 @@ class GameQuerySet(QuerySet):
             *[Q(winner=player) | Q(loser=player) for player in players]
         )
 
+    def unconfirmed_games(self, player):
+        return self.played_by(player).filter(
+            confirmed=False,
+        ).exclude(claimant=player).order_by('date_created')
+
 
 class Game(CommonModel):
     winner = models.ForeignKey(User, related_name='wins')

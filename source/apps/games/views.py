@@ -76,13 +76,7 @@ def game_confirm(request):
     """ Show the user a table of unconfirmed games, and allow them to confirm
     or reject them.
     """
-    user = request.user
-    games = Game.objects.filter(
-        confirmed=False,
-    ).filter(
-        Q(winner=user) | Q(loser=user)
-    ).exclude(claimant=user).order_by('date_created')
-
+    games = Game.objects.unconfirmed_games(request.user)
     return render(request, 'games/confirm.html', {
         'games': games,
     })
