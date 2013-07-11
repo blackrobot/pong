@@ -189,6 +189,7 @@ STATICFILES_DIRS = (
 
 # Local apps
 PROJECT_APPS = (
+    'source.utils',
     'source.apps.games',
 )
 

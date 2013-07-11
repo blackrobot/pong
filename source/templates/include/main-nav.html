@@ -1,0 +1,39 @@
+{% spaceless %}
+
+{% load gametags utiltags %}
+
+<li{% active '/' %}><a href="/">Home</a></li>
+
+{% if request.user.is_authenticated %}
+
+  {% url 'games:game_confirm' as game_confirm %}
+  {% url 'accounts:password_change' as password_change %}
+  {% url 'accounts:logout' as logout %}
+
+  <li{% active game_confirm %}>
+    <a href="{{ game_confirm }}">Confirm Games{% unconfirmed_games request.user %}</a>
+  </li>
+
+  <li{% active password_change %}>
+    <a href="{{ password_change }}">Change Password</a>
+  </li>
+
+  <li{% active logout %}><a href="{{ logout }}">Log Out</a></li>
+
+{% else %}
+
+  {% url 'accounts:password_reset' as password_reset %}
+  {% url 'accounts:login' as login %}
+
+
+  <li{% active password_reset %}>
+  <a href="{{ password_reset }}">Reset Password</a>
+  </li>
+
+  <li{% active login %}>
+    <a href="{{ login }}?next={{ request.path }}">Log In</a>
+  </li>
+
+{% endif %}
+
+{% endspaceless %}
