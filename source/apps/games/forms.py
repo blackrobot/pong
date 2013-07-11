@@ -61,7 +61,8 @@ class MatchForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.submitter = submitter = kwargs.pop('submitter')
-        opponents = User.objects.exclude(pk=submitter.pk)
+        opponents = (User.objects.exclude(pk=submitter.pk)
+                     .order_by('first_name', 'last_name'))
         super(MatchForm, self).__init__(*args, **kwargs)
         self.fields['opponent'] = forms.ChoiceField(
             choices=((o.pk, o.get_full_name()) for o in opponents),
@@ -117,7 +118,8 @@ class SingleGameForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.submitter = submitter = kwargs.pop('submitter')
-        opponents = User.objects.exclude(pk=submitter.pk)
+        opponents = (User.objects.exclude(pk=submitter.pk)
+                     .order_by('first_name', 'last_name'))
         super(SingleGameForm, self).__init__(*args, **kwargs)
         self.fields['opponent'] = forms.ChoiceField(
             choices=((o.pk, o.get_full_name()) for o in opponents),
