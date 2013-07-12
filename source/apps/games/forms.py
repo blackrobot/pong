@@ -9,26 +9,62 @@ from django.template.loader import render_to_string
 from .models import Game
 
 
-DOMAIN = Site.objects.get_current().domain
+DEFAULT_CONTEXT = {
+    'domain': Site.objects.get_current().domain,
+}
+
+
+def email_notification(subject_string, tmpl_path, tmpl_context, to_emails):
+    tmpl_context.update(DEFAULT_CONTEXT)
+    subject = "{}{}".format(
+        settings.EMAIL_SUBJECT_PREFIX,
+        subject_string.strip(),
+    )
+    body = render_to_string(tmpl_path, tmpl_context)
+
+    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, to_emails,
+              fail_silently=not settings.DEBUG)
 
 
 def request_confirmation(user, submitter):
     """ This will email a link to the given user asking them to confirm game
     outcomes.
     """
-    subject = "[Ping Pong Leaderboard] Games awaiting confirmation!"
-    body = render_to_string('games/email.confirmation.txt', {
-        'user': user,
-        'submitter': submitter,
-        'domain': DOMAIN,
-    })
-    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [user.email],
-              fail_silently=not settings.DEBUG)
+    email_notification(
+        "Games awaiting confirmation!",
+        'games/email.confirmation.txt',
+        {'user': user, 'submitter': submitter},
+        [user.email],
+    )
+
+
+def notify_rejected(game):
+    """ This will email the claimant of the game notifying them that the other
+    user has rejected their account.
+    """
+    claimant = game.claimant
+    context = {
+        'user': claimant,
+        'opponent': game.winner if game.winner != claimant else game.loser,
+        'time': game.date_created,
+    }
+    email_notification(
+        "Your game entry was denied!",
+        'games/email.rejected.txt',
+        context,
+        [game.claimant.email],
+    )
 
 
 class ConfirmationForm(forms.Form):
+    confirmed_choices = (
+        ('yes', 'yes'),
+        ('no', 'no'),
+    )
+
     game_id = forms.IntegerField(widget=forms.HiddenInput())
-    confirmed = forms.BooleanField()
+    confirmed = forms.ChoiceField(choices=confirmed_choices,
+                                  widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         game_id = kwargs.pop('game_id', None)
@@ -45,14 +81,22 @@ class ConfirmationForm(forms.Form):
         except Game.DoesNotExist:
             return False
 
-        if self.cleaned_data.get('confirmed', False):
+        confirmed = self.cleaned_data.get('confirmed', None)
+
+        if confirmed is None:
+            return False, None
+
+        yes = confirmed == 'yes'
+
+        if yes:
             game.confirmed = True
             game.save()
 
         else:
+            notify_rejected(game)
             game.delete()
 
-        return True
+        return True, yes
 
 
 class MatchForm(forms.Form):

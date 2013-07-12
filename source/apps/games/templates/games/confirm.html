@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load compress %}
 
 {% block content %}
 <div class="row-fluid">
@@ -24,11 +25,13 @@
                 <td class="loss">You Lost</td>
               {% endif %}
               <td>
-                <form action="{% url 'games:submit_confirmation' %}" class="form-inline" method="post">
-                  {{ game.form.game_id }}
+                <form class="confirmation-form" action="{% url 'games:submit_confirmation' %}" class="form-inline" method="post">
+                  {% for field in game.form %}
+                    <input type="hidden" name="{{ field.html_name }}" value="{{ field.value }}" />
+                  {% endfor %}
                   {% csrf_token %}
-                  <button class="btn btn-success" name="confirmed" value="on" type="submit">Confirm</button>
-                  <button class="btn btn-danger" name="confirmed" value="off" type="submit">Reject</button>
+                  <button data-confirm="yes" class="btn btn-success" type="button">Confirm</button>
+                  <button data-confirm="no" class="btn btn-danger" type="button">Reject</button>
                 </form>
               </td>
             </tr>
@@ -41,3 +44,9 @@
   </div>
 </div>
 {% endblock content %}
+
+{% block js %}
+  {% compress js %}
+    <script src="{{ STATIC_URL }}js/confirm.js"></script>
+  {% endcompress %}
+{% endblock %}

@@ -1,0 +1,9 @@
+Hello {{ user.get_full_name }},
+
+{{ opponent.get_full_name }} has rejected the game you entered for {{ time }}. You can re-enter these games, or let them stay rejected.
+
+Thanks!
+
+- the Blenderbox Ping Pong Leaderboard Robot
+
+http://{{ domain }}

@@ -51,23 +51,25 @@ def submit_confirmation(request):
     form = ConfirmationForm(request.POST)
 
     if form.is_valid():
-        accepted = form.save(request.user)
+        accepted, confirmed = form.save(request.user)
     else:
-        accepted = False
+        accepted, confirmed = False, False
 
-    if accepted:
-        messages.success(
-            request,
-            "<strong>Tyte!</strong> We've updated the rankings based "
-            "on your input."
-        )
+    if not accepted:
+        alert_type = messages.error
+        message_text = ("Oh no!", "We couldn't record your update. Try again?")
+
+    elif confirmed:
+        alert_type = messages.success
+        message_text = ("Tyte!", "We've confirmed your game, "
+                        "the rankings have been updated.")
+
     else:
-        messages.error(
-            request,
-            "<strong>Oh no!</strong> We couldn't record your update. "
-            "Try again?"
-        )
+        alert_type = messages.warning
+        message_text = ("Okay", "We've deleted the game, "
+                        "and notified your opponent!")
 
+    alert_type(request, "<strong>{0}</strong> {1}".format(*message_text))
     return redirect('games:game_confirm')
 
 

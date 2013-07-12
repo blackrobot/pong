@@ -36,6 +36,16 @@ header {
   h1 { position: relative; }
 }
 
+h1 a {
+  @extend %simple-transition;
+  color: #FFF;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+  }
+}
+
 #logo {
   @extend %image-replace;
   $height: 24px;
