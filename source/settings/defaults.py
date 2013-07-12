@@ -263,7 +263,7 @@ GOOGLE_ANALYTICS_ID = ''
 FABRIC_DEFAULTS = {
     'colors': True,
     'use_ssh_config': True,
-    'repo': "git@github.com:user/example.git",
+    'repo': "git@github.com:blenderbox/pong.git",
     'db_dir': '.tmp/db',
 }
 FABRIC_BASE_PATH = os.path.join('/', 'var', 'www', '%(site_url)s')
@@ -274,7 +274,14 @@ FABRIC_PATH_TEMPLATES = {
     'log': os.path.join(FABRIC_BASE_PATH, 'log'),
     'venv': os.path.join(FABRIC_BASE_PATH, 'env'),
 }
-FABRIC_ENVIRONMENTS = {}
+FABRIC_ENVIRONMENTS = {
+    'prod': {
+        'branch': 'master',
+        'django_settings': 'prod',
+        'process': 'pong.bbox.ly',
+        'site_url': 'pong.bbox.ly',
+    },
+}
 
 
 # Debug Toolbar

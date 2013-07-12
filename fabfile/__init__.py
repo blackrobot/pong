@@ -1,13 +1,14 @@
 import os
 
-from fabric.api import env, task
+from fabric.api import cd, env, lcd, local, task
 from fabric.tasks import WrappedCallableTask
 
 from . import (
-    setup, utils, vagrant,
-    commands as cmd,
+    commands as com,
     django as dj,
     operations as ops,
+    setup,
+    utils,
 )
 
 
@@ -38,8 +39,6 @@ def setup_env(key):
     def func():
         env.update(ENVIRONMENTS[key])
         env.update({k: t % env for k, t in PATH_TEMPLATES.iteritems()})
-        if env.get('vagrant', False):
-            vagrant.configure()
 
     func.__name__ = key
     func.__doc__ = "The environment setup for %s." % key
@@ -53,7 +52,7 @@ globals().update((k, setup_env(k)) for k in ENVIRONMENTS.iterkeys())
 
 # Quick commands
 @task
-def deploy(static=1, django=1, install=1, nginx=1):
+def deploy(static=1, django=1, install=1, nginx=0):
     """ A shortcut to common quick deploy scenario.
 
     1 Pull the latest from the repo.
@@ -73,5 +72,18 @@ def deploy(static=1, django=1, install=1, nginx=1):
     if django is 1:
         ops.restart_django()
 
-    if nginx is 1:
+    if nginx is not 0:
         ops.reload_nginx()
+
+
+'''
+@task
+def get_db():
+    """ A shortcut which downloads the latest database from the provided
+    server, and then overwrites your local database with its contents.
+    """
+    ops.db_dump()
+    ops.db_drop(confirmed="yes")
+    ops.db_create()
+    ops.db_restore()
+'''

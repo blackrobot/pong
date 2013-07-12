@@ -90,32 +90,6 @@ def get_dir(path):
 
 @task
 @log_call
-def db_create(charset='utf8', collate='utf8_general_ci'):
-    """ This will create your local database. """
-    cmd = "CREATE DATABASE {NAME} CHARACTER SET {charset} COLLATE {collate};"
-    local('mysql {}'.format(mysql_command(
-        execute=cmd, charset=charset, collate=collate)))
-
-
-@task
-@log_call
-def db_drop(confirmed="no"):
-    """ This will drop your local database. Pass "yes" or "y" to skip the
-    confirmation.
-    """
-    conf = confirmed.lower() in ["yes", "y"]
-
-    if not conf:
-        warning("You are about to drop your local MySQL database '{}'!".format(
-                DJANGO_SETTINGS.DATABASES['default']['NAME']))
-        if not confirm("Are you sure?", default=False):
-            return
-
-    local('mysql {}'.format(mysql_command(execute='DROP DATABASE {NAME};')))
-
-
-@task
-@log_call
 def db_restore():
     """ By default, this will download the latest PSQL dump from the server
     and install it locally. If filename is given, this will download and
