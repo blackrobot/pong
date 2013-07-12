@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load compress %}
+{% load compress gametags %}
 
 {% block content %}
 <div class="row-fluid">
   <div class="span12">
     {% if games %}
-      <table class="table table-hover">
+      <table class="table table-hover middle-align">
         <thead>
           <tr>
             <th>Date Submitted</th>
@@ -18,8 +18,9 @@
           {% for game in games %}
             <tr>
               <td class="thin-cell">{{ game.date_created }}</td>
-              <td class="bold">{{ game.claimant.get_full_name }}</td>
-              {% if game.claimant == game.loser %}
+              {% get_opponent game as opponent %}
+              <td class="bold">{{ opponent.get_full_name }}</td>
+              {% if opponent == game.loser %}
                 <td class="win">You Won</td>
               {% else %}
                 <td class="loss">You Lost</td>

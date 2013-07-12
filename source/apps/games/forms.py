@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
-from django.db.models import Q
 from django.template.loader import render_to_string
 
 from .models import Game
@@ -74,10 +73,13 @@ class ConfirmationForm(forms.Form):
 
     def save(self, user):
         try:
-            game = Game.objects.filter(
-                Q(winner=user) | Q(loser=user),
-                confirmed=False,
-            ).exclude(claimant=user).get(id=self.cleaned_data.get('game_id'))
+            game = Game.objects.unconfirmed_games(
+                user,
+            ).exclude(
+                claimant=user,
+            ).get(
+                id=self.cleaned_data.get('game_id'),
+            )
         except Game.DoesNotExist:
             return False
 
@@ -86,17 +88,18 @@ class ConfirmationForm(forms.Form):
         if confirmed is None:
             return False, None
 
-        yes = confirmed == 'yes'
+        is_yes = confirmed == 'yes'
 
-        if yes:
+        if is_yes:
             game.confirmed = True
-            game.save()
 
         else:
             notify_rejected(game)
-            game.delete()
+            game.rejected = True
 
-        return True, yes
+        game.save()
+
+        return True, is_yes
 
 
 class MatchForm(forms.Form):

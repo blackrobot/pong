@@ -4,9 +4,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.db.models import Q
 from django.shortcuts import redirect, render
-from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
 from .forms import ConfirmationForm, MatchForm, SingleGameForm
@@ -121,8 +119,16 @@ def index(request):
     else:
         single_game_form = match_form = None
 
-    query = ("SELECT COUNT(*) FROM games_game WHERE "
-             "games_game.%s_id = auth_user.id AND games_game.confirmed = TRUE")
+    query = """
+        SELECT
+            COUNT(*)
+        FROM
+            games_game
+        WHERE
+            games_game.%s_id = auth_user.id
+        AND
+            games_game.confirmed = TRUE
+    """
 
     rankings = User.objects.select_related().filter(is_active=True).extra(
         select={

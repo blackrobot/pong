@@ -83,6 +83,9 @@ h1 a {
 
 form legend { margin-bottom: 0; }
 
+table.middle-align td {
+  vertical-align: middle;
+}
 td, th {
   &.extra-thin-cell {
     width: 4%;
