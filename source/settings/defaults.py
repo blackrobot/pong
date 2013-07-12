@@ -277,7 +277,7 @@ FABRIC_PATH_TEMPLATES = {
 FABRIC_ENVIRONMENTS = {
     'prod': {
         'branch': 'master',
-        'django_settings': 'prod',
+        'django_settings': 'source.settings.prod',
         'process': 'pong.bbox.ly',
         'site_url': 'pong.bbox.ly',
     },
