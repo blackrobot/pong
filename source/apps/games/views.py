@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
 from .forms import ConfirmationForm, MatchForm, SingleGameForm
@@ -66,10 +67,14 @@ def submit_confirmation(request):
 
     else:
         alert_type = messages.warning
-        message_text = ("Okay", "We've deleted the game, "
+        message_text = ("Okay!", "We've deleted the game, "
                         "and notified your opponent!")
 
     alert_type(request, "<strong>{0}</strong> {1}".format(*message_text))
+
+    if request.is_ajax():
+        return render(request, 'include/messages.html')
+
     return redirect('games:game_confirm')
 
 

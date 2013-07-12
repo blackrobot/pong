@@ -62,6 +62,10 @@ h1 a {
   width: 144px;
 }
 
+#messages {
+  min-height: 0;
+}
+
 #rankings {
   tbody {
     td:nth-child(3) a {
@@ -103,3 +107,9 @@ td.loss {
   tr:hover > & { background-color: rgba(255, 0, 0, 0.7) !important; }
 }
 td form { margin: 0 auto; }
+tr {
+  @extend %simple-transition;
+}
+tr.muted {
+  opacity: .5;
+}
