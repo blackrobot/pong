@@ -3,13 +3,7 @@ import os
 from fabric.api import cd, env, lcd, local, task
 from fabric.tasks import WrappedCallableTask
 
-from . import (
-    commands as com,
-    django as dj,
-    operations as ops,
-    setup,
-    utils,
-)
+from . import commands, django, operations, setup, utils
 
 
 # Defaults
@@ -18,9 +12,9 @@ env.hosts = ['localhost']
 env.use_ssh_config = False
 
 # Get the defaults from the django settings
-DEFAULTS = getattr(dj.DJANGO_SETTINGS, 'FABRIC_DEFAULTS', {})
-ENVIRONMENTS = getattr(dj.DJANGO_SETTINGS, 'FABRIC_ENVIRONMENTS')
-PATH_TEMPLATES = getattr(dj.DJANGO_SETTINGS, 'FABRIC_PATH_TEMPLATES')
+DEFAULTS = getattr(django.DJANGO_SETTINGS, 'FABRIC_DEFAULTS', {})
+ENVIRONMENTS = getattr(django.DJANGO_SETTINGS, 'FABRIC_ENVIRONMENTS')
+PATH_TEMPLATES = getattr(django.DJANGO_SETTINGS, 'FABRIC_PATH_TEMPLATES')
 
 if not DEFAULTS:
     utils.error("settings.FABRIC_DEFAULTS is unset")
@@ -52,7 +46,7 @@ globals().update((k, setup_env(k)) for k in ENVIRONMENTS.iterkeys())
 
 # Quick commands
 @task
-def deploy(static=1, django=1, install=1, nginx=0):
+def deploy(static=1, dj=1, install=1, nginx=0):
     """ A shortcut to common quick deploy scenario.
 
     1 Pull the latest from the repo.
@@ -61,19 +55,19 @@ def deploy(static=1, django=1, install=1, nginx=0):
     4 Restart the Django process
     5 Reload Nginx
     """
-    ops.pull()
+    operations.pull()
 
     if static is 1:
-        dj.collectstatic()
+        django.collectstatic()
 
-    if install is 1 and ops.check_requirements(hide=True):
-        ops.install_requirements()
+    if install is 1 and operations.check_requirements(hide=True):
+        operations.install_requirements()
 
-    if django is 1:
-        ops.restart_django()
+    if dj is 1:
+        operations.restart_django()
 
     if nginx is not 0:
-        ops.reload_nginx()
+        operations.reload_nginx()
 
 
 '''

@@ -32,7 +32,7 @@
       </thead>
       <tbody>
         {% for ranked_user in rankings %}
-          <tr{% if ranked_user == request.user %} class="info"{% endif %}>
+          <tr{% if ranked_user == request.user %} class="info"{% endif %} title="Exposure: {{ ranked_user.rating.exposure|floatformat:3 }}">
             <td class="muted">{{ forloop.counter }}</td>
             <td>
               <strong>{{ ranked_user.get_full_name }}
