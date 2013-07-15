@@ -1,9 +1,9 @@
 import os
 
-from fabric.api import cd, env, lcd, local, task
+from fabric.api import env, task
 from fabric.tasks import WrappedCallableTask
 
-from . import commands, django, operations, setup, utils
+from . import commands, database, django, operations, setup, utils
 
 
 # Defaults
@@ -68,16 +68,3 @@ def deploy(static=1, dj=1, install=1, nginx=0):
 
     if nginx is not 0:
         operations.reload_nginx()
-
-
-'''
-@task
-def get_db():
-    """ A shortcut which downloads the latest database from the provided
-    server, and then overwrites your local database with its contents.
-    """
-    ops.db_dump()
-    ops.db_drop(confirmed="yes")
-    ops.db_create()
-    ops.db_restore()
-'''

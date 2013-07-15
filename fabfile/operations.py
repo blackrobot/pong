@@ -1,28 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import datetime
 import os
 
-from fabric.api import cd, env, get, hide, local, settings, task
+from fabric.api import cd, env, hide, local, settings, task
 from fabric.colors import blue, green, white, yellow
-from fabric.contrib.console import confirm
 from fabric.utils import indent, puts
 
 from .commands import git, nginx, pip, supervisor
-from .django import DJANGO_SETTINGS, get_settings
 from .utils import error, log_call, run, sudo, warning
 
 
 __all__ = [
-    'mysql_command', 'check_requirements', 'check_nginx', 'db_create',
-    'db_drop', 'db_dump', 'db_restore', 'install_requirements', 'pull',
+    'check_requirements', 'check_nginx', 'install_requirements', 'pull',
     'restart_celery', 'restart_django', 'restart_memcached', 'reload_nginx',
     'restart', 'tailgun', 'timestamp',
 ]
-
-
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-DB_EXT = 'sql'
 
 
 @task
@@ -42,78 +34,6 @@ def check_requirements(hide=False):
             diff = indent(out.splitlines(), strip=True)
             warning(["Installed packages are different from the "
                      "requirements.txt file:"] + diff)
-
-
-def mysql_command(append=None, db=None, execute=None, **kwargs):
-    """ This takes a list of strings as the first argument, a django styled
-    dictionary of django database settings, and keyword arguments representing
-    the context for string replacement. It then returns a rendered string
-    filled with variables from the db, and appends the space-joined
-    list of strings from the first argument.
-    """
-    context = {}
-    if not db:
-        db = DJANGO_SETTINGS.DATABASES['default']
-    context.update(db)
-    context.update(kwargs)
-
-    args = [a for a in ('USER', 'PASSWORD', 'HOST', 'PORT') if a in context]
-    opts = ["--%s={%s}" % (a.lower(), a) for a in args]
-
-    if execute:
-        if execute[0] not in ('"', "'"):
-            execute = '"{}"'.format(execute)
-        opts.extend(['-e', execute])
-    else:
-        opts.append('{NAME}')
-
-    cmd = ' '.join(opts + (append or [])).format(**context)
-
-    return cmd
-
-
-def get_dir(path):
-    """ This looks for the given path, prefixed with the project path if
-    relative. If it doesn't exist, it creates it and caches it. It then
-    returns the full absolute path to the directory as a string. For safety
-    it will not attempt to create any directories which are not relative
-    to the base project dir.
-    """
-    if not path.startswith('/'):
-        path = os.path.abspath(os.path.join(BASE_DIR, path))
-
-    if path.startswith(BASE_DIR) and not os.path.exists(path):
-        os.makedirs(path)
-
-    return path
-
-
-@task
-@log_call
-def db_restore():
-    """ By default, this will download the latest PSQL dump from the server
-    and install it locally. If filename is given, this will download and
-    restore the dump at the given filename.
-    """
-    tmp = os.path.join(get_dir(env.db_dir), '*.sql.bz2')
-    filename = local('ls -t {} | head -1'.format(tmp), capture=True).strip()
-    cmd = 'bunzip2 < {} | mysql {}'.format(filename, mysql_command())
-    local(cmd)
-
-
-@task
-@log_call
-def db_dump():
-    """ This will download a MySQL database from the remote server. """
-    db = get_settings(env.django_settings).DATABASES['default']
-    remote_path = os.path.join(env.backup, '{}.{}.sql.bz2').format(
-        db['NAME'],
-        datetime.datetime.now().strftime('%Y-%m-%d.%H%M%S'),
-    )
-    # Run the MySQL dump command piped to the Bzip command
-    run('mysqldump {} | bzip2 > {}'.format(mysql_command(db=db), remote_path))
-    # Download the Bzip file we just created
-    get(remote_path, local_path=get_dir(env.db_dir))
 
 
 @task
