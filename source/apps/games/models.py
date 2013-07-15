@@ -6,33 +6,29 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 import trueskill
+from picklefield.fields import PickledObjectField
 
 from source.apps.abstract.models import CommonModel, QuerySet
 
 
-ts_env = trueskill.global_env()
+_env = trueskill.TrueSkill(draw_probability=0.00)
+_env.make_as_global()
 
 
 class Rating(CommonModel):
     user = models.OneToOneField(User)
-    mu = models.FloatField(default=trueskill.MU, editable=False)
-    sigma = models.FloatField(default=trueskill.SIGMA, editable=False)
+    ts_rating = PickledObjectField(default=trueskill.Rating, editable=False)
     exposure = models.FloatField(default=0, editable=False)
 
     class Meta:
         ordering = ('-exposure',)
 
     def save(self, *args, **kwargs):
-        self.exposure = ts_env.expose(self.trueskill)
+        self.exposure = trueskill.expose(self.ts_rating)
         super(Rating, self).save(*args, **kwargs)
 
-    @property
-    def trueskill(self):
-        return ts_env.create_rating(mu=self.mu, sigma=self.sigma)
-
     def update_rating(self, outcome):
-        self.mu = outcome.mu
-        self.sigma = outcome.sigma
+        self.ts_rating = outcome
         self.save()
 
 
@@ -88,9 +84,8 @@ class Game(CommonModel):
 
     def calculate_ratings(self):
         outcomes = trueskill.rate_1vs1(
-            self.winner.rating.trueskill,
-            self.loser.rating.trueskill,
-            env=ts_env,
+            self.winner.rating.ts_rating,
+            self.loser.rating.ts_rating,
         )
         self.winner.rating.update_rating(outcomes[0])
         self.loser.rating.update_rating(outcomes[1])
