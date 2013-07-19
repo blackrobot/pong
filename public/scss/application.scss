@@ -116,3 +116,35 @@ tr {
 tr.muted {
   opacity: .5;
 }
+
+@media (max-width: 767px) {
+  h1 {
+    padding: 0 20px;
+  }
+  #logo {
+    opacity: 0;
+  }
+  #rankings {
+    th, td {
+      &:last-child {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    padding: 0 20px;
+  }
+  #logo {
+    opacity: 0;
+  }
+  #rankings {
+    th, td {
+      &:last-child {
+        display: none;
+      }
+    }
+  }
+}

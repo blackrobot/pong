@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load compress gametags %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="span12">
+    {% if games %}
+      <table class="table table-hover middle-align">
+        <thead>
+          <tr>
+            <th>Date Submitted</th>
+            <th>Opponent</th>
+            <th>Outcome</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for game in games %}
+            <tr>
+              <td class="thin-cell">{{ game.date_created }}</td>
+              {% get_opponent game as opponent %}
+              <td class="bold">{{ opponent.get_full_name }}</td>
+              {% if opponent == game.loser %}
+                <td class="win">You Won</td>
+              {% else %}
+                <td class="loss">You Lost</td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <h2>There are no games pending confirmation.</h2>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

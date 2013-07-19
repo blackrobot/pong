@@ -52,6 +52,13 @@ class GameQuerySet(QuerySet):
             *[Q(winner=player) | Q(loser=player) for player in players]
         )
 
+    def awaiting_confirmation(self, player):
+        return self.played_by(player).filter(
+            confirmed=False,
+            rejected=False,
+            claimant=player,
+        ).order_by('date_created')
+
     def unconfirmed_games(self, player):
         return self.played_by(player).filter(
             confirmed=False,

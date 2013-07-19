@@ -87,6 +87,14 @@ def game_confirm(request):
     })
 
 
+@login_required
+def awaiting_confirmation(request):
+    games = Game.objects.awaiting_confirmation(request.user)
+    return render(request, 'games/awaiting-confirmation.html', {
+        'games': games,
+    })
+
+
 def get_player_record(player, rankings):
     delta = datetime.datetime.now() - datetime.timedelta(days=14)
 

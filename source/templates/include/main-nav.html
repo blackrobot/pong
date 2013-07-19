@@ -7,11 +7,16 @@
 {% if request.user.is_authenticated %}
 
   {% url 'games:game_confirm' as game_confirm %}
+  {% url 'games:awaiting_confirmation' as awaiting_confirmation %}
   {% url 'accounts:password_change' as password_change %}
   {% url 'accounts:logout' as logout %}
 
   <li{% active game_confirm %}>
     <a href="{{ game_confirm }}">Confirm Games{% unconfirmed_games request.user %}</a>
+  </li>
+
+  <li{% active awaiting_confirmation %}>
+    <a href="{{ awaiting_confirmation }}">Awaiting Confirmation</a>
   </li>
 
   <li{% active password_change %}>
