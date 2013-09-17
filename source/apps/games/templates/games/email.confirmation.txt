@@ -1,9 +1,5 @@
-Hello {{ user.get_full_name }},
+{% extends "games/email.base.txt" %}
 
-{{ submitter.get_full_name }} has entered new games for your approval. Please visit the following link to confirm, or reject the game outcomes:
+{% block content %}{{ submitter.get_full_name|safe }} has entered new games for your approval. Please visit the following link to confirm, or reject the game outcomes:
 
-http://{{ domain }}{% url 'games:game_confirm' %}
-
-Thanks!
-
-- the Blenderbox Ping Pong Leaderboard Robot
+http://{{ domain }}{% url 'games:game_confirm' %}{% endblock %}

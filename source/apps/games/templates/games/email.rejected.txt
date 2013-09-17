@@ -1,9 +1,3 @@
-Hello {{ user.get_full_name }},
+{% extends "games/email.base.txt" %}
 
-{{ opponent.get_full_name }} has rejected the game you entered for {{ time }}. You can re-enter these games, or let them stay rejected.
-
-Thanks!
-
-- the Blenderbox Ping Pong Leaderboard Robot
-
-http://{{ domain }}
+{% block content %}{{ opponent.get_full_name|safe }} has rejected the game you entered for {{ time }}. You can re-enter these games, or let them stay rejected.{% endblock %}

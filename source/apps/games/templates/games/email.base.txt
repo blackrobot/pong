@@ -1,0 +1,9 @@
+Hello {{ user.get_full_name|safe }},
+
+{% block content %}{% endblock %}
+
+Thanks!
+
+- the Blenderbox Ping Pong Leaderboard Robot
+
+http://{{ domain }}
